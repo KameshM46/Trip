@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Planner</title>
+    <!--Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* used the ai to alter the css code */
+        :root {
+            --primary-color: #4f6ef7;
+            --primary-hover: #3b5bdb;
+            --bg-gradient: linear-gradient(135deg, #47c9c5 10%, #1a56b6 90%);
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --input-border: #e5e7eb;
+            --input-focus: #4f6ef7;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-color);
+            position: relative;
+            /* overflow: hidden; */
+            /*  the above line prevent scrollbars from moving */
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
+            /* ensure card is required shapes */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #111827;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--input-border);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            padding: 14px;
+            box-shadow: 0 4px 6px -1px rgba(79, 110, 247, 0.4);
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(79, 110, 247, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        .status.success {
+            color: #10b981;
+        }
+
+        .status.error {
+            color: #ef4444;
+        }
+
+        /* Background Shapes */
+        .shapes-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.4;
+            filter: blur(1px);
+            animation: float 20s infinite linear;
+        }
+
+        .shape.circle {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 86px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+        }
+
+        .shape.hexagon {
+            background: rgba(255, 255, 255, 0.2);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        /* Unique Shape Positions & Sizes */
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            animation-duration: 25s;
+        }
+
+        .shape:nth-child(2) {
+            top: 70%;
+            left: 80%;
+            width: 120px;
+            height: 120px;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            top: 40%;
+            left: 15%;
+            width: 60px;
+            height: 60px;
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        .shape:nth-child(4) {
+            top: 20%;
+            left: 85%;
+            width: 100px;
+            height: 100px;
+            animation-duration: 35s;
+            animation-delay: -2s;
+        }
+
+        .shape:nth-child(5) {
+            top: 80%;
+            left: 20%;
+            width: 150px;
+            height: 150px;
+            animation-duration: 40s;
+            animation-delay: -8s;
+        }
+
+        .shape:nth-child(6) {
+            top: 60%;
+            left: 60%;
+            width: 90px;
+            height: 90px;
+            animation-duration: 22s;
+            animation-delay: -15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="shapes-container">
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+        <div class="shape hexagon"></div>
+    </div>
+
+    <div class="card">
+        <h2>✈️ Trip Planner</h2>
+
+        <div class="form-group">
+            <input type="text" id="destination" placeholder="Where do you want to go?" required>
+        </div>
+
+        <div class="form-group">
+            <input type="number" id="days" placeholder="Number of Days" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <input type="number" id="budget" placeholder="Budget (₹)" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Your Email Address" required>
+        </div>
+
+        <div class="form-group">
+            <select id="modeoftravel" required>
+                <option value="" disabled selected>Select Mode of Travel</option>
+                <option value="Flight">Flight</option>
+                <option value="Train">Train</option>
+                <option value="Bus">Bus</option>
+                <option value="Car">Car</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="number" id="numberofpeople" placeholder="Number of Travelers" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <textarea id="preferences"
+                placeholder="Additional preferences (e.g., veg food, window seat, etc.)"></textarea>
+        </div>
+
+        <button onclick="sendData()">Generate & Email Plan</button>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        function sendData() {
+            const destination = document.getElementById("destination").value.trim();
+            const days = document.getElementById("days").value;
+            const budget = document.getElementById("budget").value;
+            const email = document.getElementById("email").value.trim();
+            const modeoftravel = document.getElementById("modeoftravel").value;
+            const numberofpeople = document.getElementById("numberofpeople").value;
+            const preferences = document.getElementById("preferences").value.trim();
+            const statusDiv = document.getElementById("status");
+
+            // Simple validation
+            if (!destination || !days || !budget || !email || !modeoftravel || !numberofpeople) {
+                statusDiv.innerText = "Please fill all required fields ❌";
+                statusDiv.className = "status error";
+                return;
+            }
+
+            statusDiv.innerText = "Sending request... ⏳";
+            statusDiv.className = "status";
+            // used the ai to get the correct method to send the data to the webhook
+            const webhookUrl =
+                `https://kamesh46m.app.n8n.cloud/webhook-test/Trip` +
+                `?destination=${encodeURIComponent(destination)}` +
+                `&days=${days}` +
+                `&budget=${budget}` +
+                `&email=${encodeURIComponent(email)}` +
+                `&modeoftravel=${encodeURIComponent(modeoftravel)}` +
+                `&numberofpeople=${numberofpeople}` +
+                `&preferences=${encodeURIComponent(preferences)}`;
+
+            fetch(webhookUrl)
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('Network response was not ok.');
+                    }
+                })
+                .then(() => {
+                    statusDiv.innerText = "Trip plan request sent! 📧 Check your email soon.";
+                    statusDiv.className = "status success";
+                    // Optional: Clear form
+                    // document.querySelectorAll('input, select, textarea').forEach(el => el.value = '');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    statusDiv.innerText = "Failed to send request ❌. Please try again.";
+                    statusDiv.className = "status error";
+                });
+        }
+    </script>
+
+</body>
+
+</html>
